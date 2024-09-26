@@ -76,3 +76,4 @@ node_modules/
 
 # temp data
 data/*
+output/*
