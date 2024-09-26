@@ -2,12 +2,13 @@ import dspy
 import os
 from dotenv import load_dotenv
 import json
+
 from src.data_preparation import prepare_examples
 from src.task_creation import create_task
 from signatures.assessors import Assess_Interestingness, Assess_StyleAppropriateness
 from signatures.task import TweetCreatorSignature
 from src.evaluation import create_metric
-from metrics.metrics import length_metric
+from metrics.metrics import length_metric, hashtag_count_metric
 from metrics.custom_combination import custom_combine
 from src.optimizer_handling import run_optimizer, save_optimized_model
 from src.testing import test_model
@@ -32,7 +33,7 @@ input_fields = {
 }
 
 # Prepare tweet examples
-tweet_examples = prepare_examples(data, input_fields, n_samples=10)
+tweet_examples = prepare_examples(data, input_fields, n_samples=30)
 
 # Create TweetCreator task
 TweetCreator = create_task(TweetCreatorSignature, 'Predict')
@@ -41,11 +42,14 @@ tweet_creator = TweetCreator()
 # Define the metric
 tweet_metric = create_metric(
     assessors=[
-        (Assess_Interestingness, {'tweet': 'tweet'}),
-        (Assess_StyleAppropriateness, {'tweet': 'tweet', 'topic': 'topic'})
+        ('Interestingness', Assess_Interestingness, {'tweet': 'tweet'}, (0, 10)),
+        ('Style_Appropriateness', Assess_StyleAppropriateness, {'tweet': 'tweet', 'topic': 'topic'}, (0, 10))
     ],
-    additional_metrics=[length_metric],
-    combine_method=custom_combine,
+    additional_metrics=[
+        ('Length_Check', length_metric),
+        ('Hashtag_Count', hashtag_count_metric)
+    ],
+    combine_method="multiplicative",
     threshold=0.25
 )
 
@@ -58,7 +62,7 @@ optimized_tweet_creator = run_optimizer(
 )
 
 # Save the optimized model
-save_optimized_model(optimized_tweet_creator, folder='output', name='tweet_creator_v1')
+save_optimized_model(optimized_tweet_creator, folder='output', name='tweet_creator')
 
 # Test the Optimized Program (Short version)
 print("Short Test Output:")
@@ -68,18 +72,20 @@ test_model(
     n_tests=5,
     input_fields=['topic', 'details'],
     output_field='tweet',
-    verbose=False
+    metric=tweet_metric,
+    verbose=False,
+    truncate=100
 )
 
-print("\n" + "="*50 + "\n")  # Separator between short and verbose outputs
 
-# Test the Optimized Program (Verbose version)
-print("Verbose Test Output:")
-test_model(
-    model=optimized_tweet_creator,
-    test_data=tweet_examples,
-    n_tests=5,
-    input_fields=['topic', 'details'],
-    output_field='tweet',
-    verbose=True
-)
+# # Test the Optimized Program (Verbose version)
+# print("Verbose Test Output:")
+# test_model(
+#     model=optimized_tweet_creator,
+#     test_data=tweet_examples,
+#     n_tests=5,
+#     input_fields=['topic', 'details'],
+#     output_field='tweet',
+#     metric=tweet_metric,
+#     verbose=True
+# )
