@@ -1,29 +1,40 @@
-from dspy.teleprompt import BootstrapFewShot
+from dspy.teleprompt import BootstrapFewShot, BootstrapFewShotWithRandomSearch
 from datetime import datetime
 import os
 
-def initialize_optimizer(optimizer_type='BootstrapFewShot', **kwargs):
-    optimizer_classes = {
-        'BootstrapFewShot': BootstrapFewShot
-    }
-    
-    default_settings = {
-        'BootstrapFewShot': {
+# Combined dictionary for optimizer classes and their default settings
+OPTIMIZERS = {
+    'BootstrapFewShot': {
+        'class': BootstrapFewShot,
+        'default_settings': {
             'max_bootstrapped_demos': 4,
             'max_labeled_demos': 16,
             'max_rounds': 1,
             'max_errors': 5
         }
+    },
+    'BootstrapFewShotWithRandomSearch': {
+        'class': BootstrapFewShotWithRandomSearch,
+        'default_settings': {
+            'max_bootstrapped_demos': 4,
+            'max_labeled_demos': 16,
+            'max_rounds': 1,
+            'num_candidate_programs': 16,
+            'num_threads': 6,
+            'max_errors': 10
+        }
     }
-    
-    if optimizer_type not in optimizer_classes:
+}
+
+def initialize_optimizer(optimizer_type='BootstrapFewShot', **kwargs):
+    if optimizer_type not in OPTIMIZERS:
         raise ValueError(f"Unsupported optimizer type: {optimizer_type}")
     
-    optimizer_class = optimizer_classes[optimizer_type]
-    settings = default_settings[optimizer_type].copy()
+    optimizer_info = OPTIMIZERS[optimizer_type]
+    settings = optimizer_info['default_settings'].copy()
     settings.update(kwargs)
     
-    return optimizer_class(**settings)
+    return optimizer_info['class'](**settings)
 
 def compile_optimizer(optimizer, student, trainset):
     return optimizer.compile(student=student, trainset=trainset)
@@ -41,6 +52,15 @@ def save_optimized_model(optimized_model, folder='output', name=None):
     print(f"Optimized model saved to {filepath}")
 
 def run_optimizer(optimizer_type, metric, student, trainset, **kwargs):
-    optimizer = initialize_optimizer(optimizer_type, metric=metric, **kwargs)
+    # Wrap the metric in a function that ensures it returns a single numeric value
+    def wrapped_metric(*args, **kwargs):
+        result = metric(*args, **kwargs)
+        if isinstance(result, dict):
+            # If the metric returns a dictionary, we need to combine the scores
+            # This is a simple example; you might need to adjust this based on your specific metric structure
+            return sum(result.values()) / len(result)
+        return result
+
+    optimizer = initialize_optimizer(optimizer_type, metric=wrapped_metric, **kwargs)
     optimized_model = compile_optimizer(optimizer, student, trainset)
     return optimized_model

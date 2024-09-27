@@ -44,7 +44,7 @@ dspy.settings.configure(lm=dspy.LM(
 ))
 
 # Load the data - make sure to transform to JSON format
-with open('data/clean/example_data.json', 'r', encoding='utf-8') as f:
+with open('data/example_data.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 # Define the input fields in the JSON file
@@ -100,6 +100,6 @@ test_model(
     input_fields=['topic', 'details'],
     output_field='tweet',
     metric=tweet_metric,
-    verbose=False,
+    verbose=True,
     truncate=100
 )

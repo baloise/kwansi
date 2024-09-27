@@ -75,5 +75,4 @@ node_modules/
 /*.log
 
 # temp data
-data/*
 output/*
