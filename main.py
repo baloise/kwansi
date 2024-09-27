@@ -54,7 +54,7 @@ input_fields = {
 }
 
 # Prepare examples (i.e. the training data)
-tweet_examples = prepare_examples(data, input_fields, n_samples=30)
+tweet_examples = prepare_examples(data, input_fields, n_samples=100)
 
 # Create the task (i.e. the main prompt we're trying to optimize - defined in signatures/task.py)
 TweetCreator = create_task(TweetCreatorSignature, 'ChainOfThought')
@@ -81,25 +81,24 @@ tweet_metric = create_metric(
 )
 
 # Run the optimizer (i.e. the process of optimizing the task)
-optimized_tweet_creator = run_optimizer(
-    optimizer_type='BootstrapFewShot',
+optimized_tweet_creator, optimizer_type = run_optimizer(
+    optimizer_type='MIPROv2',
     metric=tweet_metric,
     student=tweet_creator,
     trainset=tweet_examples
 )
 
-# Save the optimized model - important, as you will want to reuse this optimized model in another DSPy chain
-save_optimized_model(optimized_tweet_creator, folder='output', name='tweet_creator')
+# Save the optimized model - now including the optimizer type in the filename
+save_optimized_model(optimized_tweet_creator, optimizer_type, folder='output', name='tweet_creator')
 
 # Test the Optimized Program (use verbose=True for more details)
 print("Short Test Output:")
 test_model(
     model=optimized_tweet_creator,
     test_data=tweet_examples,
-    n_tests=5,
+    n_tests=3,
     input_fields=['topic', 'details'],
     output_field='tweet',
     metric=tweet_metric,
-    verbose=True,
-    truncate=100
+    verbose=True
 )

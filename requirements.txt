@@ -1,2 +1,7 @@
 dspy-ai
 dotenv
+python-dotenv
+os
+json
+datetime
+random
