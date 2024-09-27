@@ -174,3 +174,33 @@ marketing_message_metric = create_metric(
 - `metric`: The metric to use for the test, usually created with `create_metric()`.
 - `verbose`: Whether to print verbose output during the test.
 - `truncate` (only if verbose is False): The number of characters to show in the test (non-verbose) results.
+
+## Typical Workflow
+
+### Preparation
+
+1. Obtain or create a dataset of input data.
+2. Create a signature for the task you want to optimize.
+3. Create evaluators (either metric functions or assessor signatures).
+4. Optional: Create a custom combiner function for your evaluators (or choose additive / multiplicative).
+
+### Optimization
+
+1. Define the DSPy model you want to use with `dspy.settings.configure()`.
+2. Load data, additional wrangling (if needed), make sure it's in JSON format.
+3. Define the input fields in the JSON file.
+4. Prepare your examples with `prepare_examples()`.
+5. Create your task with `create_task()`.
+6. Create your evaluators with `create_metric()`.
+7. Run the optimizer with `run_optimizer()`.
+8. Save the optimized model with `save_optimized_model()`.
+9. Test the optimized model with `test_model()`.
+10. Iterate on the process by refining your evaluators and repeating the process.
+
+### Further Use
+
+After optimization, utilize the optimized model for your specific use case in another DSPy workflow.
+
+## Example
+
+You can check out a full example in the separate repository here: [tbd]
