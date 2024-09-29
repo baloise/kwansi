@@ -90,8 +90,8 @@ OPTIMIZERS = {
             'student': None,
             'trainset': None,
             'valset': None,
-            'max_bootstrapped_demos': 0,  # Changed to 0
-            'max_labeled_demos': 0,  # Changed to 0
+            'max_bootstrapped_demos': 0,
+            'max_labeled_demos': 0,
             'num_trials': 15,
             'minibatch_size': 25,
             'minibatch_full_eval_steps': 10,
