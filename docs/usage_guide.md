@@ -10,7 +10,7 @@
 3. [Key Functions](#key-functions)
    - [prepare_examples()](#prepare_examples)
    - [create_task()](#create_task)
-   - [create_metric()](#create_metric)
+   - [create_evaluator()](#create_evaluator)
    - [run_optimizer()](#run_optimizer)
    - [save_optimized_model()](#save_optimized_model)
    - [test_model()](#test_model)
@@ -118,19 +118,19 @@ An **optimizer** is an algorithm that automatically improves a prompt. It is a f
 - `signature`: A DSPy signature to create a task from.
 - `module_name`: The name of the DSPy module to use for the task (usually ´Predict´ or ´ChainOfThought´).
 
-### create_metric()
+### create_evaluator()
 
-`metric_creation.create_metric()` is a function that converts a set of assessors and additional metrics into a single metric that can be used to optimize a prompt. Parameters:
+`metric_creation.create_evaluator()` is a function that converts a set of assessors and additional metrics into a single evaluator that can be used to optimize a prompt. Parameters:
 
-- `assessors`: A list of assessors to use for the metric.
-- `additional_metrics`: A list of additional metrics to use for the metric.
+- `assessors`: A list of assessors to use for the evaluator.
+- `additional_metrics`: A list of additional metrics to use for the evaluator.
 - `combine_method`: The method to use to combine the assessor scores and additional metrics into a single score.
-- `threshold`: The minimum score for the metric to be considered (barely) passing. This value is between 0 and 1 and depends on the combiner method (for example, an additive combiner with a threshold of 0.5 means that the metric will be considered passing if the combined score is greater than 0.5, while a multiplicative combiner with a threshold of 0.5 means that the metric will be considered passing if the product of the scores of all assessors and metrics is greater than 0.5).
+- `threshold`: The minimum score for the evaluator to be considered (barely) passing. This value is between 0 and 1 and depends on the combiner method (for example, an additive combiner with a threshold of 0.5 means that the evaluator will be considered passing if the combined score is greater than 0.5, while a multiplicative combiner with a threshold of 0.5 means that the evaluator will be considered passing if the product of the scores of all assessors and metrics is greater than 0.5).
 
 Example:
 
 ```python
-marketing_message_metric = create_metric(
+marketing_message_evaluator = create_evaluator(
     assessors=[
         ('Relevance', Assess_Relevance, {'message': 'message', 'segment': 'segment', 'interests': 'interests'}, (0, 10)),
         ('Tone_Appropriateness', Assess_ToneAppropriateness, {'message': 'message', 'age': 'age'}, (0, 10)),
@@ -192,7 +192,7 @@ marketing_message_metric = create_metric(
 3. Define the input fields in the JSON file.
 4. Prepare your examples with `prepare_examples()`.
 5. Create your task with `create_task()`.
-6. Create your evaluators with `create_metric()`.
+6. Create your evaluators with `create_evaluator()`.
 7. Run the optimizer with `run_optimizer()`.
 8. Save the optimized model with `save_optimized_model()`.
 9. Test the optimized model with `test_model()`.

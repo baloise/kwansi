@@ -1,13 +1,13 @@
 import dspy
 from typing import List, Tuple, Callable, Union
 
-def create_metric(
+def create_evaluator(
     assessors: List[Tuple[str, Callable, dict, Tuple[float, float]]], 
     additional_metrics: List[Tuple[str, Callable]] = None, 
     combine_method: Union[str, Callable] = 'multiplicative',
     threshold: float = 0.25
 ):
-    def metric(example, pred, trace=None):
+    def evaluator(example, pred, trace=None):
         scores = {}
         
         # Run assessors
@@ -45,7 +45,7 @@ def create_metric(
         
         return scores
     
-    return metric
+    return evaluator
 
 def extract_score(score_str):
     try:

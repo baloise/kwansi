@@ -1,4 +1,4 @@
-def test_model(model, test_data, n_tests=5, input_fields=None, output_field=None, metric=None, verbose=False, truncate=50):
+def test_model(model, test_data, n_tests=5, input_fields=None, output_field=None, evaluator=None, verbose=False, truncate=50):
     if input_fields is None:
         input_fields = test_data[0].__dict__.keys()
     
@@ -15,10 +15,10 @@ def test_model(model, test_data, n_tests=5, input_fields=None, output_field=None
                 print(f"{field.capitalize()}: {getattr(example, field)}")
             print(f"Generated {output_field}: {getattr(prediction, output_field)}")
             
-            if metric:
-                metric_result = metric(example, prediction)
-                print("Metric scores:")
-                for key, value in metric_result.items():
+            if evaluator:
+                evaluator_result = evaluator(example, prediction)
+                print("Evaluator scores:")
+                for key, value in evaluator_result.items():
                     if isinstance(value, float):
                         print(f"  {key}: {value:.4f}")
                     else:

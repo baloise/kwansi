@@ -153,13 +153,13 @@ def save_optimized_model(optimized_model, optimizer_type, folder='output', name=
     optimized_model.save(filepath)
     print(f"Optimized model saved to {filepath}")
 
-def run_optimizer(optimizer_type, metric, student, trainset, **kwargs):
-    def wrapped_metric(*args, **kwargs):
-        result = metric(*args, **kwargs)
+def run_optimizer(optimizer_type, evaluator, student, trainset, **kwargs):
+    def wrapped_evaluator(*args, **kwargs):
+        result = evaluator(*args, **kwargs)
         if isinstance(result, dict):
             return sum(result.values()) / len(result)
         return result
 
-    optimizer = initialize_optimizer(optimizer_type, metric=wrapped_metric, **kwargs)
+    optimizer = initialize_optimizer(optimizer_type, metric=wrapped_evaluator, **kwargs)
     optimized_model = compile_optimizer(optimizer, student, trainset, optimizer_type)
     return optimized_model, optimizer_type
