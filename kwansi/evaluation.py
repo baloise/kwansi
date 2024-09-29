@@ -1,6 +1,5 @@
 import dspy
 from typing import List, Tuple, Callable, Union
-from signatures.assessors import Assess_Interestingness, Assess_StyleAppropriateness
 
 def create_metric(
     assessors: List[Tuple[str, Callable, dict, Tuple[float, float]]], 
