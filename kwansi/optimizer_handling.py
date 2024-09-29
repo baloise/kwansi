@@ -76,6 +76,34 @@ OPTIMIZERS = {
             'min_valset_size': 50,
             'min_trainset_size': 50
         }
+    },
+    'MIPROv2ZeroShot': {
+        'class': MIPROv2,
+        'default_settings': {
+            'num_candidates': 7,
+            'init_temperature': 0.5,
+            'verbose': False,
+            'num_threads': 64,
+            'max_errors': 10
+        },
+        'compile_args': {
+            'student': None,
+            'trainset': None,
+            'valset': None,
+            'max_bootstrapped_demos': 0,  # Changed to 0
+            'max_labeled_demos': 0,  # Changed to 0
+            'num_trials': 15,
+            'minibatch_size': 25,
+            'minibatch_full_eval_steps': 10,
+            'minibatch': True,
+            'requires_permission_to_run': False
+        },
+        'valset_handling': {
+            'use_valset': True,
+            'valset_ratio': 0.8,
+            'min_valset_size': 50,
+            'min_trainset_size': 50
+        }
     }
 }
 
