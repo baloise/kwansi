@@ -12,7 +12,11 @@ OPTIMIZERS = {
             'max_rounds': 1,
             'max_errors': 5
         },
-        'compile_args': {}
+        'compile_args': {
+            'student': None,
+            'teacher': None,
+            'trainset': None 
+        }
     },
     'BootstrapFewShotWithRandomSearch': {
         'class': BootstrapFewShotWithRandomSearch,
@@ -58,9 +62,9 @@ OPTIMIZERS = {
             'minibatch': True,
             'requires_permission_to_run': False
         },
-        'min_trainset_size': 50,  # Minimum recommended size for the training set
-        'min_valset_size': 50,    # Minimum recommended size for the validation set
-        'valset_ratio': 0.8       # Ratio of trainset to use as valset if not provided
+        'min_trainset_size': 50,  
+        'min_valset_size': 50,  
+        'valset_ratio': 0.8   
     }
 }
 
@@ -78,24 +82,23 @@ def compile_optimizer(optimizer, student, trainset, optimizer_type):
     optimizer_info = OPTIMIZERS[optimizer_type]
     compile_args = optimizer_info['compile_args'].copy()
     
-    # Check trainset size
-    if len(trainset) < optimizer_info.get('min_trainset_size', 0):
-        raise ValueError(f"Training set size ({len(trainset)}) is too small for {optimizer_type}. Minimum recommended size is {optimizer_info['min_trainset_size']}.")
+    # Remove valset-related checks for BootstrapFewShot
+    if optimizer_type != 'BootstrapFewShot':
+        # Existing valset logic for other optimizers
+        if 'valset' not in compile_args:
+            valset_size = int(len(trainset) * optimizer_info.get('valset_ratio', 0.8))
+            compile_args['valset'] = trainset[:valset_size]
+        
+        if len(compile_args['valset']) < optimizer_info.get('min_valset_size', 0):
+            raise ValueError(f"Validation set size ({len(compile_args['valset'])}) is too small for {optimizer_type}. Minimum recommended size is {optimizer_info['min_valset_size']}.")
+        
+        if 'minibatch_size' in compile_args and compile_args['minibatch_size'] > len(compile_args['valset']):
+            compile_args['minibatch_size'] = len(compile_args['valset'])
     
-    # Prepare valset if not provided
-    if 'valset' not in compile_args:
-        valset_size = int(len(trainset) * optimizer_info.get('valset_ratio', 0.8))
-        compile_args['valset'] = trainset[:valset_size]
+    # Common arguments for all optimizers
+    compile_args['student'] = student
+    compile_args['trainset'] = trainset
     
-    # Check valset size
-    if len(compile_args['valset']) < optimizer_info.get('min_valset_size', 0):
-        raise ValueError(f"Validation set size ({len(compile_args['valset'])}) is too small for {optimizer_type}. Minimum recommended size is {optimizer_info['min_valset_size']}.")
-    
-    # Adjust minibatch_size if necessary
-    if 'minibatch_size' in compile_args and compile_args['minibatch_size'] > len(compile_args['valset']):
-        compile_args['minibatch_size'] = len(compile_args['valset'])
-    
-    compile_args.update(student=student, trainset=trainset)
     return optimizer.compile(**compile_args)
 
 def save_optimized_model(optimized_model, optimizer_type, folder='output', name=None):
