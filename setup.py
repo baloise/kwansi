@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="kwansi",
-    version="0.1.0",
+    version="0.1.1",
     author="Timm Süss",
     author_email="catchall@sporez.com",
     description="A library for creating and optimizing prompts for language models",

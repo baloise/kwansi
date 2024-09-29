@@ -5,7 +5,7 @@ Kwansi is a library that simplifies the creation and optimization of prompts for
 ## Installation
 
 ```bash
-pip install kwansi
+pip install git+https://github.com/lordamp/kwansi.git
 ```
 
 ## Quick Start
@@ -18,7 +18,9 @@ import kwansi
 
 ## Documentation
 
-For detailed usage instructions, API documentation, and examples, please refer to our [Usage Guide](docs/usage_guide.md).
+For an documentation of the functions in kwansi, check out https://github.com/lordamp/kwansi/blob/main/docs/usage_guide.md.
+
+For an example implementation of kwansi, check out https://github.com/lordamp/kwansi_example (separate repository).
 
 ## Requirements
 
