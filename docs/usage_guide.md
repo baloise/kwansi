@@ -204,4 +204,4 @@ After optimization, utilize the optimized model for your specific use case in an
 
 ## Example
 
-You can check out a full example in the separate repository here: [tbd]
+You can check out a full example in the separate repository here: [[kawansi_example (repo)]](https://github.com/baloise/kwansi_example)
