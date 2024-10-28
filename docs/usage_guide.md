@@ -149,7 +149,7 @@ marketing_message_evaluator = create_evaluator(
 
 `optimizer_handling.run_optimizer()` is a function that runs the optimizer and returns the optimized task and the optimizer type. It takes care of DSPy's optimizer initialization and compilation process. Parameters:
 
-- `optimizer_type`: The type of optimizer to use. This can be "BootstrapFewShot", "BootstrapFewShotWithRandomSearch", "COPRO", or "MIPROv2".
+- `optimizer_type`: The type of optimizer to use. This can be "BootstrapFewShot", "BootstrapFewShotWithRandomSearch", "COPRO", "MIPROv2" or "MIPROv2ZeroShot".
 - `metric`: The metric to use for the optimizer, usually created with `create_metric()`.
 - `student`: The task definition you are optimizing, usually created with `create_task()`.
 - `trainset`: The trainset to use for the optimizer, usually created with `prepare_examples()`.
