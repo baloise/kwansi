@@ -13,7 +13,11 @@ def create_evaluator(
         # Run assessors
         for name, assessor, kwargs, (scale_min, scale_max) in assessors:
             with dspy.context():
-                result = dspy.Predict(assessor)(**{**kwargs, **vars(example), 'tweet': pred.tweet})
+                # Create kwargs by merging the provided kwargs with example attributes
+                assessment_kwargs = {**kwargs, **vars(example)}
+                # Add prediction attributes
+                assessment_kwargs.update(vars(pred))
+                result = dspy.Predict(assessor)(**assessment_kwargs)
             raw_score = result.score
             score = (extract_score(raw_score) - scale_min) / (scale_max - scale_min)
             scores[name] = score
