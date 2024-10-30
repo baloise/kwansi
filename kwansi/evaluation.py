@@ -11,16 +11,24 @@ def create_evaluator(
         scores = {}
         
         # Run assessors
-        for name, assessor, kwargs, (scale_min, scale_max) in assessors:
+        for name, assessor, field_mapping, (scale_min, scale_max) in assessors:
             with dspy.context():
-                # Create kwargs by merging the provided kwargs with example attributes
-                assessment_kwargs = {**kwargs, **vars(example)}
-                # Add prediction attributes
-                assessment_kwargs.update(vars(pred))
+                # Create kwargs by mapping fields from example and prediction
+                assessment_kwargs = {}
+                for target_field, source_field in field_mapping.items():
+                    # Try to get from prediction first
+                    if hasattr(pred, source_field):
+                        assessment_kwargs[target_field] = getattr(pred, source_field)
+                    # Then try from example
+                    elif hasattr(example, source_field):
+                        assessment_kwargs[target_field] = getattr(example, source_field)
+                    else:
+                        raise ValueError(f"Field {source_field} not found in either prediction or example")
+                
                 result = dspy.Predict(assessor)(**assessment_kwargs)
-            raw_score = result.score
-            score = (extract_score(raw_score) - scale_min) / (scale_max - scale_min)
-            scores[name] = score
+                raw_score = result.score
+                score = (extract_score(raw_score) - scale_min) / (scale_max - scale_min)
+                scores[name] = score
         
         # Run additional metrics
         if additional_metrics:
@@ -48,8 +56,6 @@ def create_evaluator(
             return total_score >= threshold
         
         return scores
-    
-    return evaluator
 
 def extract_score(score_str):
     try:
