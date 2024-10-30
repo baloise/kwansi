@@ -56,6 +56,8 @@ def create_evaluator(
             return total_score >= threshold
         
         return scores
+    
+    return evaluator
 
 def extract_score(score_str):
     try:
