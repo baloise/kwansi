@@ -25,7 +25,7 @@ Kwansi is a library that makes it easy to create and optimize prompts for langua
 
 Note that anything Kwansi can do, DSPy can do as well (and more); Kwansi just offers a simpler function set for creating optimizing existing prompts.
 
-Please make yourself familiar with the fundamentals of [DSPy](https://dspy-docs.vercel.app/docs/intro) before using Kwansi: Signatures, Modules, Examples, Optimizers, and Metrics.
+Please make yourself familiar with the fundamentals of [DSPy](https://dspy.ai/) before using Kwansi: Signatures, Modules, Examples, Optimizers, and Metrics.
 
 ## Key Elements
 
@@ -80,7 +80,7 @@ or more complex structures with multiple fields:
 
 Note that these data points just represent inputs for a prompt, so it's not necessary to create "gold standard" outputs. They need to be representative of the input space you want to optimize over, and the outputs you want to generate. 
 
-Depending on the optimizer you use, you will need different amounts of examples. Please check DSPy's documentation [Which optimizer should I use?](https://dspy-docs.vercel.app/docs/building-blocks/optimizers#which-optimizer-should-i-use) for more information.
+Depending on the optimizer you use, you will need different amounts of examples. Please check DSPy's documentation [Which optimizer should I use?](https://dspy.ai/learn/optimization/optimizers/#which-optimizer-should-i-use) for more information.
 
 ### Optimizers
 
